@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.themehedi.mvvmstarterpack.model.responseModel.CommonDropdownResponse;
 import com.themehedi.mvvmstarterpack.model.responseModel.FakeUsersResponse;
 import com.themehedi.mvvmstarterpack.network.ApiClient;
 import com.themehedi.mvvmstarterpack.network.ApiInterface;
@@ -22,19 +23,19 @@ public class UsersRepository {
 
     private static final String TAG = UsersRepository.class.getSimpleName();
 
-    public LiveData<List<FakeUsersResponse>> getUsersList() {
-        final MutableLiveData<List<FakeUsersResponse>> mutableLiveData = new MutableLiveData<>();
+    public LiveData<CommonDropdownResponse> getUsersList() {
+        final MutableLiveData<CommonDropdownResponse> mutableLiveData = new MutableLiveData<>();
 
         ApiInterface getApiCallInstance = new ApiClient().getApiClient(BaseUrl.URL).create(ApiInterface.class);
-        Call<List<FakeUsersResponse>> apiCall = getApiCallInstance.getUsersList();
+        Call<CommonDropdownResponse> apiCall = getApiCallInstance.getCommonDropdownList();
 
-        apiCall.enqueue(new Callback<List<FakeUsersResponse>>() {
+        apiCall.enqueue(new Callback<CommonDropdownResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<FakeUsersResponse>> call, @NonNull Response<List<FakeUsersResponse>> response) {
+            public void onResponse(@NonNull Call<CommonDropdownResponse> call, @NonNull Response<CommonDropdownResponse> response) {
                 String responseCode = String.valueOf(response.code());
                 Log.d(TAG, responseCode);
                 Log.e("responseCodeLogin", responseCode);
-                List<FakeUsersResponse> supplierInfoResponse;
+                CommonDropdownResponse supplierInfoResponse;
                 if (response.isSuccessful()) {
                     if (response.code()==200){
                         supplierInfoResponse=response.body();
@@ -47,7 +48,7 @@ public class UsersRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<FakeUsersResponse>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<CommonDropdownResponse> call, @NonNull Throwable t) {
                 Log.e("error", t.getMessage());
             }
         });

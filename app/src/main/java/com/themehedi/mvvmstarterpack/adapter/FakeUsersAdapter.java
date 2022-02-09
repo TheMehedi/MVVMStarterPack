@@ -14,7 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.themehedi.mvvmstarterpack.R;
 import com.themehedi.mvvmstarterpack.databinding.UserItemBinding;
 import com.themehedi.mvvmstarterpack.helper.ItemClickListener;
-import com.themehedi.mvvmstarterpack.model.responseModel.FakeUsersResponse;
+import com.themehedi.mvvmstarterpack.model.dataModel.District;
+import com.themehedi.mvvmstarterpack.model.dataModel.Division;
+import com.themehedi.mvvmstarterpack.model.dataModel.Divisions;
+import com.themehedi.mvvmstarterpack.model.dataModel.Divisions;
 
 import java.util.List;
 
@@ -22,12 +25,12 @@ import java.util.List;
 public class FakeUsersAdapter extends RecyclerView.Adapter<FakeUsersAdapter.ViewHolder>{
     private final Context context;
     Activity mActivity;
-    private final List<FakeUsersResponse> dataModel;
+    private final List<Divisions> dataModel;
     ItemClickListener clickListener;
 //    PrefManager prefManager;
 
 
-    public FakeUsersAdapter(Context context, Activity mActivity, List<FakeUsersResponse> dataModel) {
+    public FakeUsersAdapter(Context context, Activity mActivity, List<Divisions> dataModel) {
         this.context = context;
         this.mActivity=mActivity;
         this.dataModel = dataModel;
@@ -46,13 +49,9 @@ public class FakeUsersAdapter extends RecyclerView.Adapter<FakeUsersAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
-        FakeUsersResponse data = dataModel.get(position);
+        Divisions data = dataModel.get(position);
 
-        holder.binding.nameTv.setText(data.getName());
-        holder.binding.companyTv.setText(data.getCompany().getName());
-        holder.binding.emailTv.setText(data.getEmail());
-        holder.binding.phoneTv.setText(data.getPhone());
-        holder.binding.websiteTv.setText(data.getWebsite());
+        holder.binding.nameTv.setText(data.getText_en());
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

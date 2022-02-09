@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +23,14 @@ import com.themehedi.mvvmstarterpack.databinding.ActivityMainBinding;
 import com.themehedi.mvvmstarterpack.helper.BaseActivity;
 import com.themehedi.mvvmstarterpack.helper.ConnectionDetector;
 import com.themehedi.mvvmstarterpack.helper.ItemClickListener;
+import com.themehedi.mvvmstarterpack.model.dataModel.Division;
+import com.themehedi.mvvmstarterpack.model.dataModel.Divisions;
+import com.themehedi.mvvmstarterpack.model.responseModel.CommonDropdownResponse;
+import com.themehedi.mvvmstarterpack.room.Room;
 import com.themehedi.mvvmstarterpack.viewmodel.UserViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity implements ItemClickListener {
 
@@ -37,25 +46,37 @@ public class MainActivity extends BaseActivity implements ItemClickListener {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         cd = new ConnectionDetector(MainActivity.this);
         isInternetAvailable = cd.isConnectingToInternet();
         dialog = new ProgressDialog(MainActivity.this);
 
         if (isInternetAvailable) {
             try {
-                userViewModel.getUsersListLiveData().observe(this, allUsersResponse -> {
-                    if (allUsersResponse.size()>0){
+                userViewModel.getUsersListLiveData().observe(this, commonDropdownResponse -> {
+
+                    if (commonDropdownResponse.getSuccess()){
                         //                Toast.makeText(ServiceWhomeActivity.this, "onChanged success!", Toast.LENGTH_SHORT).show();
 
+                        List<Divisions> divisionsList = new ArrayList<>();
 
-                        FakeUsersAdapter fakeUsersAdapter = new FakeUsersAdapter( MainActivity.this,MainActivity.this,allUsersResponse);
+                        for (int i = 0; i< commonDropdownResponse.getData().getDivisionList().size(); i++){
+
+                            Division division = commonDropdownResponse.getData().getDivisionList().get(i);
+                            divisionsList.add(new Divisions(division.getValue(),division.getTextEn(), division.getTextBn(), division.getStatus()));
+
+                        }
+
+
+                        Room.getInstance(MainActivity.this).moaDao().insertAllDivision(divisionsList);
+
+                        FakeUsersAdapter fakeUsersAdapter = new FakeUsersAdapter( MainActivity.this,MainActivity.this,Room.getInstance(MainActivity.this).moaDao().getAllDivision());
                         //                int resId = R.anim.layout_animation_left_right;
                         //                LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(this, resId);
                         //                binding.recyclerView.setLayoutAnimation(animation);
 
                         binding.recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 1, LinearLayoutManager.VERTICAL, false));
                         binding.recyclerView.setItemAnimator(new DefaultItemAnimator());
-                        fakeUsersAdapter.setItemClickListener(this);
                         binding.recyclerView.setAdapter(fakeUsersAdapter);
 //                    dialog.dismiss();
 
@@ -64,6 +85,7 @@ public class MainActivity extends BaseActivity implements ItemClickListener {
                         Toast.makeText(MainActivity.this, "onChanged failed!", Toast.LENGTH_SHORT).show();
                     }
                 });
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

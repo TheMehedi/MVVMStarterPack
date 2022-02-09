@@ -3,6 +3,7 @@ package com.themehedi.mvvmstarterpack.viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.themehedi.mvvmstarterpack.model.responseModel.CommonDropdownResponse;
 import com.themehedi.mvvmstarterpack.model.responseModel.FakeUsersResponse;
 import com.themehedi.mvvmstarterpack.repository.UsersRepository;
 
@@ -16,7 +17,7 @@ public class UserViewModel extends ViewModel {
         usersRepository = new UsersRepository();
     }
 
-    public LiveData<List<FakeUsersResponse>> getUsersListLiveData() {
+    public LiveData<CommonDropdownResponse> getUsersListLiveData() {
         return usersRepository.getUsersList();
     }
 
